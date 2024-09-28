@@ -10,6 +10,10 @@ import {
 import {msg} from '@lingui/macro'
 import {useLingui} from '@lingui/react'
 
+import {useHaptics} from '#/lib/haptics'
+import {decrementBadgeCount} from '#/lib/notifications/notifications'
+import {logEvent} from '#/lib/statsig/statsig'
+import {sanitizeDisplayName} from '#/lib/strings/display-names'
 import {
   postUriToRelativePath,
   toBskyAppUrl,
@@ -19,13 +23,10 @@ import {isNative} from '#/platform/detection'
 import {useProfileShadow} from '#/state/cache/profile-shadow'
 import {useModerationOpts} from '#/state/preferences/moderation-opts'
 import {useSession} from '#/state/session'
-import {useHaptics} from 'lib/haptics'
-import {decrementBadgeCount} from 'lib/notifications/notifications'
-import {logEvent} from 'lib/statsig/statsig'
-import {sanitizeDisplayName} from 'lib/strings/display-names'
 import {TimeElapsed} from '#/view/com/util/TimeElapsed'
-import {UserAvatar} from '#/view/com/util/UserAvatar'
+import {PreviewableUserAvatar} from '#/view/com/util/UserAvatar'
 import {atoms as a, useBreakpoints, useTheme, web} from '#/alf'
+import * as tokens from '#/alf/tokens'
 import {ConvoMenu} from '#/components/dms/ConvoMenu'
 import {Bell2Off_Filled_Corner0_Rounded as BellStroke} from '#/components/icons/Bell2'
 import {Link} from '#/components/Link'
@@ -203,6 +204,19 @@ function ChatListItemReady({
       onFocus={onFocus}
       onBlur={onMouseLeave}
       style={[a.relative]}>
+      <View
+        style={[
+          a.z_10,
+          a.absolute,
+          {top: tokens.space.md, left: tokens.space.lg},
+        ]}>
+        <PreviewableUserAvatar
+          profile={profile}
+          size={52}
+          moderation={moderation.ui('avatar')}
+        />
+      </View>
+
       <Link
         to={`/messages/${convo.id}`}
         label={displayName}
@@ -236,11 +250,8 @@ function ChatListItemReady({
               (hovered || pressed || focused) && t.atoms.bg_contrast_25,
               t.atoms.border_contrast_low,
             ]}>
-            <UserAvatar
-              avatar={profile.avatar}
-              size={52}
-              moderation={moderation.ui('avatar')}
-            />
+            {/* Avatar goes here */}
+            <View style={{width: 52, height: 52}} />
 
             <View style={[a.flex_1, a.justify_center, web({paddingRight: 45})]}>
               <View style={[a.w_full, a.flex_row, a.align_end, a.pb_2xs]}>
@@ -248,6 +259,7 @@ function ChatListItemReady({
                   numberOfLines={1}
                   style={[{maxWidth: '85%'}, web([a.leading_normal])]}>
                   <Text
+                    emoji
                     style={[
                       a.text_md,
                       t.atoms.text,
@@ -301,6 +313,7 @@ function ChatListItemReady({
               )}
 
               <Text
+                emoji
                 numberOfLines={2}
                 style={[
                   a.text_sm,
@@ -355,7 +368,7 @@ function ChatListItemReady({
           a.self_end,
           a.justify_center,
           {
-            right: a.px_lg.paddingRight,
+            right: tokens.space.lg,
             opacity: !gtMobile || showActions || menuControl.isOpen ? 1 : 0,
           },
         ]}

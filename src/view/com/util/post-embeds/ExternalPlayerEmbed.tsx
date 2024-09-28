@@ -227,8 +227,16 @@ export function ExternalPlayer({
       <Animated.View
         ref={viewRef}
         collapsable={false}
-        style={[aspect, a.rounded_sm]}>
-        {link.thumb && (!isPlayerActive || isLoading) && (
+        style={[
+          aspect,
+          a.rounded_md,
+          a.overflow_hidden,
+          {
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
+          },
+        ]}>
+        {link.thumb && (!isPlayerActive || isLoading) ? (
           <>
             <Image
               style={[a.flex_1, styles.topRadius]}
@@ -237,7 +245,7 @@ export function ExternalPlayer({
             />
             <Fill
               style={[
-                a.rounded_sm,
+                a.rounded_md,
                 t.name === 'light' ? t.atoms.bg_contrast_975 : t.atoms.bg,
                 {
                   borderBottomLeftRadius: 0,
@@ -256,7 +264,29 @@ export function ExternalPlayer({
               ]}
             />
           </>
+        ) : (
+          <Fill
+            style={[
+              a.rounded_md,
+              {
+                backgroundColor:
+                  t.name === 'light' ? t.palette.contrast_975 : 'black',
+                borderBottomLeftRadius: 0,
+                borderBottomRightRadius: 0,
+                opacity: 0.3,
+              },
+            ]}
+          />
         )}
+        <MediaInsetBorder
+          opaque
+          style={[
+            {
+              borderBottomLeftRadius: 0,
+              borderBottomRightRadius: 0,
+            },
+          ]}
+        />
         <PlaceholderOverlay
           isLoading={isLoading}
           isPlayerActive={isPlayerActive}
@@ -274,8 +304,8 @@ export function ExternalPlayer({
 
 const styles = StyleSheet.create({
   topRadius: {
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
+    borderTopLeftRadius: a.rounded_md.borderRadius,
+    borderTopRightRadius: a.rounded_md.borderRadius,
   },
   overlayContainer: {
     flex: 1,
@@ -289,8 +319,8 @@ const styles = StyleSheet.create({
     zIndex: 3,
   },
   webview: {
-    borderTopRightRadius: 8,
-    borderTopLeftRadius: 8,
+    borderTopRightRadius: a.rounded_md.borderRadius,
+    borderTopLeftRadius: a.rounded_md.borderRadius,
     backgroundColor: 'transparent',
   },
   gifContainer: {
